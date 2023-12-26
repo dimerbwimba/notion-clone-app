@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronsLeftRight } from "lucide-react";
+import { Check, ChevronsLeftRight } from "lucide-react";
 import { SignOutButton, useUser } from "@clerk/clerk-react";
 
 
@@ -42,16 +42,24 @@ const UserItem = () => {
                         <p className=" text-xs font-medium leading-none text-muted-foreground">
                             {user?.emailAddresses[0].emailAddress}
                         </p>
-                        <div className="flex items-center gap-x-2">
-                            <div className=" rounded-md bg-secondary p-1">
-                                <Avatar className="h-8 w-8">
-                                    <AvatarImage src={user?.imageUrl}/>
-                                </Avatar>
+                        <div className="flex justify-between items-center cursor-pointer hover:bg-primary/5 gap-x-2 rounded-md">
+                            <div className="flex items-center">
+                                <div className=" rounded-md bg-secondary p-1">
+                                    <Avatar className="h-8 w-8">
+                                        <AvatarImage src={user?.imageUrl}/>
+                                    </Avatar>
+                                </div>
+                                <div className=" space-y-1 ">
+                                    <p className=" text-sm line-clamp-1">
+                                        {user?.fullName}&apos;s Joition
+                                    </p>
+                                    <p className=" text-xs text-muted-foreground line-clamp-1">
+                                        Free Plan 1 Member
+                                    </p>
+                                </div>
                             </div>
-                            <div className=" space-y-1">
-                                <p className=" text-sm line-clamp-1">
-                                    {user?.fullName}&apos;s Joition
-                                </p>
+                            <div className=" mr-2">
+                                <Check className="w-4 h-4"/>
                             </div>
                         </div>
                     </div>

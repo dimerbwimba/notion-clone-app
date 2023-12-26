@@ -1,11 +1,15 @@
 "use client"
 
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronsLeft, MenuIcon } from "lucide-react";
+import { ChevronLeft, ChevronsLeft, MenuIcon, PlusCircle, Search, Settings } from "lucide-react";
 import { usePathname } from "next/navigation";
 import React, { ElementRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import UserItem from "./user-item";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import Item from "./item";
+import { toast } from "sonner";
 
 const Navigation = () => {
     const pathname = usePathname()
@@ -15,6 +19,11 @@ const Navigation = () => {
     const navbarRef = useRef<ElementRef<"div">>(null)
     const [isResetting, setIsResetting] =  useState(false)
     const [isCollapsed, setIsCollapsed] = useState(false)
+    
+
+    const documents = useQuery(api.documents.get)
+    const create = useMutation(api.documents.create)
+
     useEffect(()=>{
         setIsCollapsed(isMobile)
     },[isMobile])
@@ -32,6 +41,7 @@ const Navigation = () => {
             collapse()
         }
     },[pathname, isMobile])
+
     const handleMouseDown = (
         event: React.MouseEvent<HTMLDivElement, MouseEvent>
       ) => {
@@ -43,7 +53,7 @@ const Navigation = () => {
         document.addEventListener("mouseup", handleMouseUp);
       };
     
-      const handleMouseMove = (event: MouseEvent) => {
+    const handleMouseMove = (event: MouseEvent) => {
         if (!isResizingRef.current) return;
         let newWidth = event.clientX;
     
@@ -57,13 +67,13 @@ const Navigation = () => {
         }
       };
     
-      const handleMouseUp = () => {
+    const handleMouseUp = () => {
         isResizingRef.current = false;
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
       };
     
-      const resetWidth = () => {
+    const resetWidth = () => {
         if (sidebarRef.current && navbarRef.current) {
           setIsCollapsed(false);
           setIsResetting(true);
@@ -81,7 +91,7 @@ const Navigation = () => {
         }
       };
     
-      const collapse = () => {
+    const collapse = () => {
         if (sidebarRef.current && navbarRef.current) {
           setIsCollapsed(true);
           setIsResetting(true);
@@ -92,7 +102,14 @@ const Navigation = () => {
           setTimeout(() => setIsResetting(false), 300);
         }
       }
-    
+    const handleCreate = () => {
+      const promise = create({title:"Untitled"})
+      toast.promise(promise,{
+        loading:"Creating a new note...",
+        success:"New note created!",
+        error:"Failed to create a new note"
+      })
+    }
     return ( 
         <>
         <aside ref={sidebarRef} className={cn(
@@ -112,10 +129,25 @@ const Navigation = () => {
             </div>
             <div>
               <UserItem/>
+              <Item
+                label={"Search"}
+                icon={ Search}
+                isSearch
+                onClick={()=>{}}
+              />
+              <Item
+                label={"Settings"}
+                icon={ Settings }
+                onClick={()=>{}}
+              />
+              <Item onClick={handleCreate} label="New Page" icon={PlusCircle} />
             </div>
 
             <div className="mt-4">
-                <p>Documents</p>
+             
+                {documents?.map((document)=>(
+                  <p key={document._id}>{document.title}</p>
+                ))}
             </div>
             <div 
                 onMouseDown={handleMouseDown} 
