@@ -39,7 +39,7 @@ const DocumentList = (
     })
 
     const OnRedirect = (documentId: string) => {
-        router.push(`/documens/${documentId}`)
+        router.push(`/documents/${documentId}`)
     }
 
     if (documents === undefined) {
