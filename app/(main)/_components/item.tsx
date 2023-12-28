@@ -103,7 +103,7 @@ const Item = ({
         )}
     >
         {!!id &&(
-            <div onClick={handleExpand} role="button" className=" h-full rounded-sm hover:bg-neutral-300 dark:bg-neutral-600 mr-1">
+            <div onClick={handleExpand} role="button" className=" h-full rounded-sm hover:bg-neutral-300 dark:bg-neutral-600 dark:hover:bg-neutral-500  mr-1">
                 <ChevronIcon className="h-4 w-4 chrink-0 text-muted-foreground/50"/>
             </div>
         )}
