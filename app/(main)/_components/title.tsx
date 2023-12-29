@@ -57,9 +57,10 @@ const Title = ({ initialData }: TitleProps) => {
                     onClick={() => setIsEditing(!isEditing)}
                     className=" font-normal text-sm  h-auto "
                 >
-                    <div className="w-60">
-                        <span className="truncate hover:bg-primary/5 p-1 rounded-sm">
+                    <div className="">
+                        <span className="truncate flex  hover:bg-primary/5 p-1 rounded-sm">
 
+            {!!initialData.icon && <p>{initialData.icon}</p>}
                             {initialData?.title}
                         </span>
 
@@ -71,7 +72,6 @@ const Title = ({ initialData }: TitleProps) => {
       
                 
             
-            {!!initialData.icon && <p>{initialData.icon}</p>}
             {
                 isEditing ? (
                     
