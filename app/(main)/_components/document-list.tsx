@@ -5,9 +5,10 @@ import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import Item from "./item";
 import { cn } from "@/lib/utils";
 import { FileIcon } from "lucide-react";
+import Document from "./document";
+import BannerMini from "./banner-mini";
 
 interface DocumentListProps {
     parentDocumentId?: Id<"documents">;
@@ -17,11 +18,7 @@ interface DocumentListProps {
 
 
 const DocumentList = (
-    {
-        parentDocumentId,
-        level = 0,
-
-    }: DocumentListProps
+    {parentDocumentId,level = 0,}: DocumentListProps
 ) => {
     const params = useParams()
     const router = useRouter()
@@ -32,24 +29,25 @@ const DocumentList = (
             ...prevExpanded,
             [documentId]: !prevExpanded[documentId]
         }))
-    };
+    };    
 
-    const documents = useQuery(api.documents.getSidebar, {
-        parentDocument: parentDocumentId
+    const documents = useQuery(api.documents.getDocument, {
+        parentDocument: parentDocumentId,
+        parentCategoryId: params.categoryId as Id<"categories">
     })
 
     const OnRedirect = (documentId: string) => {
-        router.push(`/documents/${documentId}`)
+        router.push(`/documents/${params.categoryId}/${documentId}`)
     }
 
     if (documents === undefined) {
         return (
             <>
-                <Item.Skeleton level={level} />
+                <Document.Skeleton level={level} />
                 {level === 0 && (
                     <>
-                        <Item.Skeleton level={level} />
-                        <Item.Skeleton level={level} />
+                        <Document.Skeleton level={level} />
+                        <Document.Skeleton level={level} />
 
                     </>
                 )}
@@ -68,31 +66,36 @@ const DocumentList = (
                     level === 0 && "hidden"
                 )}
             >
-                No Pages inside
+                No document inside
             </p>
             {documents?.map((document) => (
-                <div key={document._id}>
-                    <Item
-                        id={document._id}
-                        onClick={() => OnRedirect(document._id)}
-                        label={document.title}
-                        icon={FileIcon}
-                        documentIcon={document.icon}
-                        active={params.documentId === document._id}
-                        level={level}
-                        onExpand={() => onExpand(document._id)}
-                        expanded={expanded[document._id]}
+                <>
+                    <div key={document._id}>
+                        <Document
+                            id={document._id}
+                            onClick={() => OnRedirect(document._id)}
+                            label={document.title}
+                            isPublished={document.isPublished}
+                            icon={FileIcon}
+                            documentIcon={document.icon}
+                            active={params.documentId === document._id}
+                            level={level}
+                            onExpand={() => onExpand(document._id)}
+                            expanded={expanded[document._id]}
 
-                    />
-                    {
-                        expanded[document._id] && (
-                            <DocumentList
-                                parentDocumentId={document._id}
-                                level={level + 1}
-                            />
-                        )
-                    }
-                </div>
+                        />
+                        { document.isArchived && <BannerMini documentId={document._id}/>}
+                        {
+                            expanded[document._id] && (
+                                <DocumentList
+                                    parentDocumentId={document._id}
+                                    level={level + 1}
+                                />
+                            )
+                        }
+                    </div>
+              
+                </>
             ))
             }
         </>

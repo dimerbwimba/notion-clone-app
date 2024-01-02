@@ -2,21 +2,23 @@
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/clerk-react";
 import { useMutation } from "convex/react";
-import { ChevronDown, ChevronRight, LucideIcon, MoreHorizontal, Plus, Trash } from "lucide-react";
+import { ChevronDown, ChevronRight, Globe, LucideIcon, MoreHorizontal, Plus, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 
 interface ItemProps {
-    id?:Id<"documents">;
+    id?:Id<"categories">;
     label:String;
     onClick? : ()=>void ;
     icon: LucideIcon
+    isPublished? : boolean;
     documentIcon?:string;
     active?:boolean;
     expanded?:boolean;
@@ -32,6 +34,7 @@ const Item = ({
     label, 
     onClick, 
     icon:Icon ,
+    isPublished,
     documentIcon,
     active,
     expanded,
@@ -42,8 +45,7 @@ const Item = ({
 
     const {user} = useUser()
     const router = useRouter()
-    const create = useMutation(api.documents.create)
-    const archive = useMutation(api.documents.archive)
+    const archive = useMutation(api.categories.archive)
 
     const onArchive = (event:React.MouseEvent<HTMLDivElement, MouseEvent>)=>{
 
@@ -67,28 +69,6 @@ const Item = ({
         onExpand?.();
     }
 
-    const onCreate = (event:React.MouseEvent<HTMLDivElement, MouseEvent>) =>{
-
-        event.stopPropagation();
-
-        if (!id) return;   
-
-        const promise = create({
-            title:"Untitled",
-            parentDocument:id
-        }).then((documentId)=>{
-            if (!expanded) {
-                onExpand?.();
-            }
-            router.push(`/documents/${documentId}`)
-        })
-
-        toast.promise(promise,{
-            loading:"Creating new note...",
-            success:"New note created !",
-            error:"Fail to create a  new note !"
-        })
-    }
 
     const ChevronIcon = expanded ? ChevronDown:ChevronRight
 
@@ -99,7 +79,8 @@ const Item = ({
         style={{ 
             paddingLeft: level ? `${(level * 12) + 12}px`: "12px"}}
         className={cn("group min-h-[27px] text-sm py-1 pr-3 w-full hover:bg-primary/5 text-muted-foreground flex items-center font-medium" , 
-            active && "bg-primary/5 text-primary font-bold"
+            active && "bg-primary/5 text-primary font-bold",
+            isPublished  && "text-green-700"
         )}
     >
         {!!id &&(
@@ -116,9 +97,20 @@ const Item = ({
                 <Icon className=" shrink-0 h-[18px] w-[18px] mr-2 text-muted-foreground"/>
             )
         }
-        <span className=" truncate">
-            {label}
-        </span>
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger className=" truncate">
+                    <span className=" truncate">
+                        {label} 
+                    </span>
+                </TooltipTrigger>
+                <TooltipContent className=" text-sm">
+                    <p className=" text-sm">
+                        {label} 
+                    </p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
         {
             isSearch && (
                 <kbd className=" ml-auto pointer-events-none  inline-flex 
@@ -157,10 +149,6 @@ const Item = ({
                             </div>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <div role="button" onClick={onCreate} className="  opacity-0 group-hover:opacity-100 
-                    h-full ml-auto rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 ">
-                        <Plus className="h-4 w-4 text-muted-foreground"/>
-                    </div>
                 </div>
             )
         }

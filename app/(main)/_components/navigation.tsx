@@ -10,12 +10,12 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Item from "./item";
 import { toast } from "sonner";
-import DocumentList from "./document-list";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import TrashBox from "./trash-box";
 import { useSearch } from "@/hooks/use-search";
 import { useSettings } from "@/hooks/use-settings";
 import Navbar from "./navbar";
+import CategoryList from "./category-list";
 
 const Navigation = () => {
 
@@ -32,7 +32,7 @@ const Navigation = () => {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
 
-  const create = useMutation(api.documents.create)
+  const create = useMutation(api.categories.create)
 
   useEffect(() => {
     setIsCollapsed(isMobile)
@@ -113,15 +113,17 @@ const Navigation = () => {
     }
   }
 
+
+
   const handleCreate = () => {
-    const promise = create({ title: "Untitled" })
+    const promise = create({ name: "Untitled" })
       .then((documentId)=>{
         router.push(`/documents/${documentId}`)
       })
     toast.promise(promise, {
-      loading: "Creating a new note...",
-      success: "New note created!",
-      error: "Failed to create a new note"
+      loading: "Creating a new category...",
+      success: "New category created!",
+      error: "Failed to create a new category"
     })
   }
 
@@ -155,12 +157,12 @@ const Navigation = () => {
             icon={Settings}
             onClick={settings.onOpen}
           />
-          <Item onClick={handleCreate} label="New Page" icon={PlusCircle} />
+          <Item onClick={handleCreate} label="Category" icon={PlusCircle} />
         </div>
 
         <div className="mt-4">
-          <DocumentList />
-          <Item onClick={handleCreate} icon={Plus} label={"Add a page"} />
+          <CategoryList/>
+          <Item onClick={handleCreate} icon={Plus} label={"Category"} />
           <Popover>
             <PopoverTrigger className="w-full mt-4">
               <Item icon={Trash} label={"Trash"} />
@@ -183,7 +185,7 @@ const Navigation = () => {
           isResetting && "transition-all ease-in-out duration-300",
           isMobile && "left-0 w-full")}
       >
-        {!!params.documentId ?(
+        {!!params.categoryId ?(
           <Navbar
             isCollapsed =  {isCollapsed}
             onResetWidth = {resetWidth}

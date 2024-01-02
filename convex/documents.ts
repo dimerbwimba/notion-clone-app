@@ -52,8 +52,9 @@ export const archive = mutation ({
   }
 });
 
-export const getSidebar = query({
+export const getDocument = query({
     args: {
+      parentCategoryId:v.optional(v.id("categories")),
       parentDocument: v.optional(v.id("documents"))
     },
     handler: async (ctx, args) => {
@@ -73,7 +74,8 @@ export const getSidebar = query({
             .eq("parentDocument", args.parentDocument)
         )
         .filter((q) =>
-          q.eq(q.field("isArchived"), false)
+          q.eq(q.field("parentCategory"), args.parentCategoryId)
+            
         )
         .order("desc")
         .collect();
@@ -83,10 +85,12 @@ export const getSidebar = query({
     },
 });
 
+
 export const create = mutation({
   args: {
     title: v.string(),
-    parentDocument: v.optional(v.id("documents")),
+    parentDocument : v.optional(v.id("documents")),
+    categoryId: v.optional(v.id("categories")),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -100,6 +104,7 @@ export const create = mutation({
     const document = await ctx.db.insert("documents", {
       title: args.title,
       parentDocument: args.parentDocument,
+      parentCategory: args.categoryId,
       userId,
       isArchived: false,
       isPublished: false,
@@ -302,6 +307,8 @@ export const update = mutation({
     title: v.optional(v.string()),
     content: v.optional(v.string()),
     coverImage: v.optional(v.string()),
+    category:v.optional(v.id("categories")),
+    description: v.optional(v.string()),
     icon: v.optional(v.string()),
     isPublished : v.optional(v.boolean())
   },

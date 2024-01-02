@@ -10,19 +10,19 @@ import { Cross, XCircle } from "lucide-react";
 import React, { useRef, useState } from "react";
 
 interface TitleProps {
-    initialData: Doc<"documents">
+    initialData: Doc<"categories">
 }
 
 const Title = ({ initialData }: TitleProps) => {
 
     const inputRef = useRef<HTMLInputElement>(null)
-    const update = useMutation(api.documents.update)
+    const update = useMutation(api.categories.update)
 
     const [isEditing, setIsEditing] = useState(false)
-    const [title, setTitle] = useState(initialData.title || "Untitled")
+    const [title, setTitle] = useState(initialData.name || "Untitled")
 
     const enableInput = () => {
-        setTitle(initialData.title);
+        setTitle(initialData.name);
         setIsEditing(true);
         setTimeout(() => {
             inputRef.current?.focus();
@@ -38,7 +38,7 @@ const Title = ({ initialData }: TitleProps) => {
         setTitle(event.target.value)
         update({
             id: initialData._id,
-            title: event.target.value || "Untitled"
+            name: event.target.value || "Untitled"
         })
     }
 
@@ -61,17 +61,13 @@ const Title = ({ initialData }: TitleProps) => {
                         <span className="truncate flex  hover:bg-primary/5 p-1 rounded-sm">
 
             {!!initialData.icon && <p>{initialData.icon}</p>}
-                            {initialData?.title}
+                            {initialData?.name}
                         </span>
 
                     </div>
                 </div>
 
-            </div>
-        
-      
-                
-            
+            </div>               
             {
                 isEditing ? (
                     

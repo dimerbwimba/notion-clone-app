@@ -15,52 +15,52 @@ const TrashBox = () => {
 
     const router = useRouter()
     const params = useParams()
-    const documents = useQuery(api.documents.getTrash)
-    const restore = useMutation(api.documents.restoreTrashed)
-    const remove = useMutation(api.documents.remove)
+    const categories = useQuery(api.categories.getTrash)
+    const restore = useMutation(api.categories.restoreTrashed)
+    const remove = useMutation(api.categories.remove)
 
     const [search, setSearch] = useState("")
 
-    const filteredDocuments = documents?.filter((document)=>{
-        return document.title.toLowerCase().includes(search.toLowerCase())
+    const filteredcategorys = categories?.filter((category)=>{
+        return category.name.toLowerCase().includes(search.toLowerCase())
     }) 
 
     
-    const onClick = (documentId:String) =>{
-        router.push(`/documents/${documentId}`)
+    const onClick = (categoryId:String) =>{
+        router.push(`/category/${categoryId}`)
     }
 
     const onRestore = (
         event:React.MouseEvent<HTMLDivElement, MouseEvent>, 
-        documentId:Id<"documents">) =>{
+        categoryId:Id<"categories">) =>{
 
             event.stopPropagation();
-            const promise = restore({id:documentId})
+            const promise = restore({id:categoryId})
             toast.promise(promise,{
                 loading:"Restoring note...",
-                success:"Note restored successfully !",
-                error:"Fail to restor the note ! "
+                success:"Category restored successfully !",
+                error:"Fail to restor the category ! "
             })
              
     }
 
     const onRemove = (
-        documentId:Id<"documents">) =>{
-            const promise = remove({id:documentId})
+        categoryId:Id<"categories">) =>{
+            const promise = remove({id:categoryId})
             toast.promise(promise,{
-                loading:"Deleting note...",
-                success:"Note deleted successfully !",
-                error:"Fail to delete the note ! "
+                loading:"Deleting category...",
+                success:"Category deleted successfully !",
+                error:"Fail to delete the category ! "
             })        
 
-        if (params.documentId === documentId) {
+        if (params.documentId === categoryId) {
             router.push("/documents")
         }
 
 
     }
 
-    if (documents === undefined) {
+    if (categories === undefined) {
         return (
             <div className=" h-full flex item-center justify-center p-4">
                 <Spinner size={"lg"}/>
@@ -81,24 +81,24 @@ const TrashBox = () => {
             </div>
             <div className="mt-2 px-1 pb-1">
                 <p className="hidden last:block text-xs text-center  text-muted-foreground pb-2 ">
-                    No Documents found
+                    No categorys found
                 </p>
-                { filteredDocuments?.map((document)=>(
+                { filteredcategorys?.map((category)=>(
                     <div 
-                        key={document._id} 
+                        key={category._id} 
                         role="button" 
-                        onClick={()=>onClick(document._id)}
+                        onClick={()=>onClick(category._id)}
                         className=" text-sm rounded-sm w-full  hover:bg-primary/5 flex \
                         items-center text-primary justify-between  "
                     >
                         <span className=" pl-2 truncate">
-                            {document.title}
+                            {category.name}
                         </span>
                         <div className=" flex">
-                            <div className=" rounded-sm p-2  hover:bg-neutral-200  dark:hover:bg-neutral-700" role="button" onClick={(e)=> onRestore(e,document._id)}>
+                            <div className=" rounded-sm p-2  hover:bg-neutral-200  dark:hover:bg-neutral-700" role="button" onClick={(e)=> onRestore(e,category._id)}>
                                 <Undo className="w-4 h-4 text-muted-foreground"/>
                             </div>
-                            <ConfirmModal onConfirm={()=> onRemove(document._id)}>
+                            <ConfirmModal onConfirm={()=> onRemove(category._id)}>
                                 <div className=" rounded-sm p-2  hover:bg-neutral-200 dark:hover:bg-neutral-700" role="button">
                                     <Trash className="w-4 h-4 text-muted-foreground"/>
                                 </div>

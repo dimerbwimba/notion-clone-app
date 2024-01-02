@@ -8,7 +8,7 @@ const PublicLayout = ({
     return ( 
       <div className="h-full dark:bg-[#1F1F1F]">
         <NavMenu/>
-            <main className="h-full pt-30 flex justify-center items-center">
+            <main className=" pt-30 flex justify-center items-center">
                 {children}
             </main>
       </div>

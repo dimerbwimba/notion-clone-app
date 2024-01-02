@@ -9,6 +9,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import TextareaAutoSize from "react-textarea-autosize";
 import { useCoverImage } from "@/hooks/use-cover-image";
+import Description from "@/components/description";
 
 interface ToolbarProps {
     initialData: Doc<"documents">;
@@ -94,6 +95,7 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
 
             <div className=" opacity-0 group-hover:opacity-100 
             flex items-center gap-x-1 py-4">
+                
                 {!initialData.icon && !preview && (
                     <IconPicker asChild onChange={onIconSelect}>
                         <Button
@@ -127,7 +129,7 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
                  onKeyDown={onKeyDown}
                  value={value}
                  onChange={(e)=> onInput(e.target.value)}
-                 className=" text-5xl bg-transparent font-bold break-words outline-none 
+                 className=" text-5xl w-full bg-transparent font-bold break-words outline-none 
                  text-[#3f3f3f] dark:text-[#CFCFCF] resize-none" 
                 />
             ) : (
@@ -139,6 +141,7 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
                     {initialData.title}
                 </div>
             )}
+            <Description initialData={initialData} />
         </div>
     );
 }

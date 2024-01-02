@@ -12,13 +12,13 @@ import { toast } from "sonner";
 
 
 interface PublishProps{
-    initialData : Doc<"documents">
+    initialData : Doc<"categories">
 }
 
 const Publish = ({initialData}:PublishProps) => {
 
     const origin = useOrigin()
-    const update = useMutation(api.documents.update)
+    const update = useMutation(api.categories.update)
 
     const [copied, setCopied] = useState(false);
     const [isSubmiting, setIdSubmiting] = useState(false);
@@ -34,9 +34,9 @@ const Publish = ({initialData}:PublishProps) => {
         }).finally(()=> setIdSubmiting(false))
 
         toast.promise(promise,{
-            success:"Note published successfully !",
+            success:"Category published successfully !",
             loading:"Publishing...",
-            error:"Fail to publish the note !"
+            error:"Fail to publish the category !"
         })
 
     }
@@ -84,7 +84,7 @@ const Publish = ({initialData}:PublishProps) => {
                         <div className=" flex items-center gap-x-2">
                             <Globe className=" text-sky animate-pulse h-4 w-4" />
                             <p className=" text-xs font-medium text-sky-500">
-                            This note is live on web
+                            This Category is live on web
                             </p>
                         </div>
                         <div className=" flex items-center">
@@ -123,7 +123,7 @@ const Publish = ({initialData}:PublishProps) => {
                             className="h-8 w-8 text-muted-foreground mb-2"
                         />
                         <p className=" text-sm font-medium mb-2">
-                            Publish this note
+                            Publish this Category
                         </p>
                         <span className=" text-xs text-muted-foreground mb-4 ">
                             Share your work with others
